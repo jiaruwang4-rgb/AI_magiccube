@@ -1,0 +1,9 @@
+{
+  "name": "AI魔方手机读卡测试",
+  "short_name": "AI魔方",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#13233c",
+  "lang": "zh-CN"
+}

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#13233c" />
+  <meta name="description" content="AI魔方NFC卡牌手机测试页面" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>AI魔方｜手机读卡测试</title>
+  <style>
+    :root{--ink:#172238;--muted:#657084;--bg:#f4f6fb;--blue:#3167d5;--yellow:#f3b23d;--red:#e15954;--green:#2a9d79;--white:#fff;--line:#dfe5ef}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+    button,input,textarea{font:inherit}.app{max-width:640px;margin:0 auto;min-height:100vh;padding:env(safe-area-inset-top) 16px calc(30px + env(safe-area-inset-bottom))}
+    header{padding:22px 4px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.eyebrow{font-size:12px;color:var(--blue);font-weight:800;letter-spacing:.12em}.title{margin:4px 0 0;font-size:25px;line-height:1.2}.status-dot{width:10px;height:10px;border-radius:50%;background:#aab3c2;box-shadow:0 0 0 5px #e5e8ee;margin-top:9px}.status-dot.on{background:#1eae76;box-shadow:0 0 0 5px #dcf5eb}
+    .card{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 10px 30px rgba(26,44,77,.07);margin-bottom:14px}.hero{text-align:center;padding:24px 18px}.scanner{width:144px;height:190px;border-radius:17px;margin:2px auto 14px;border:3px dashed #a9b9d4;display:grid;place-items:center;background:linear-gradient(145deg,#f9fbff,#eef3fb);position:relative}.scanner::before,.scanner::after{content:"";position:absolute;border:2px solid var(--blue);border-left:0;border-bottom:0;border-radius:50%;transform:rotate(45deg)}.scanner::before{width:45px;height:45px}.scanner::after{width:70px;height:70px;opacity:.35}.scanner.scanning{animation:pulse 1.15s infinite}.scanner.success{border-color:var(--green);background:#eaf8f2}@keyframes pulse{50%{transform:scale(1.025);box-shadow:0 0 0 12px rgba(49,103,213,.07)}}
+    .headline{font-size:22px;font-weight:850;margin:0 0 6px}.sub{color:var(--muted);line-height:1.55;margin:0}.primary{width:100%;border:0;border-radius:15px;padding:15px 18px;background:var(--blue);color:white;font-weight:800;margin-top:17px;box-shadow:0 8px 20px rgba(49,103,213,.23)}.primary:disabled{background:#aab4c6;box-shadow:none}.secondary{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 13px;color:var(--ink);font-weight:700}.row{display:flex;gap:9px;flex-wrap:wrap}.row .secondary{flex:1}.hidden{display:none!important}
+    .stage-label{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.08em}.stage-title{font-size:20px;margin:5px 0 9px}.progress{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}.step{height:7px;border-radius:99px;background:#e8ecf3}.step.done{background:var(--blue)}
+    .read-card{border-radius:18px;padding:17px;color:#fff;margin:13px 0}.read-card.task{background:var(--yellow);color:#352305}.read-card.function{background:var(--blue)}.read-card.risk{background:var(--red)}.read-card.detective{background:var(--green)}.read-id{font-size:12px;font-weight:900;opacity:.8}.read-name{font-size:25px;font-weight:900;margin-top:5px}.read-desc{font-size:14px;line-height:1.5;margin-top:5px}
+    .message{border-radius:14px;padding:12px 14px;background:#eef3ff;color:#244f9e;line-height:1.5;font-weight:650;margin-top:12px}.message.warn{background:#fff0ef;color:#a63d38}.message.ok{background:#eaf8f2;color:#24755d}
+    label{font-weight:800;font-size:14px;display:block;margin-bottom:7px}textarea{width:100%;min-height:92px;border:1px solid #cfd7e5;border-radius:13px;padding:12px;resize:vertical;background:#fbfcff;line-height:1.5}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chip{border:1px solid #ced7e7;background:#fff;border-radius:99px;padding:7px 10px;font-size:12px;color:#496078}
+    details{margin-top:10px}summary{cursor:pointer;color:var(--muted);font-size:13px;font-weight:750}.sim-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}.sim-grid button{border:1px solid var(--line);background:white;border-radius:10px;padding:9px 4px;font-size:12px;font-weight:800}.history{display:flex;gap:8px;overflow-x:auto;padding-bottom:3px}.history-item{min-width:70px;border:1px solid var(--line);background:#fafbfe;border-radius:12px;padding:8px;text-align:center}.history-item b{display:block;font-size:13px}.history-item span{font-size:10px;color:var(--muted)}
+    .result{text-align:center}.badges{display:flex;justify-content:center;gap:10px;margin:16px 0}.badge{width:82px;height:82px;border-radius:50%;background:#fff6d7;border:3px solid #f2c95c;display:grid;place-items:center;font-size:12px;font-weight:900;padding:10px}.rule{background:#f0f5ff;border-radius:15px;padding:14px;line-height:1.6;text-align:left}.tiny{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px}
+    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#172238;color:#fff;padding:11px 16px;border-radius:99px;font-weight:750;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:9}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+<main class="app">
+  <header><div><div class="eyebrow">AI MAGIC CUBE</div><h1 class="title">手机读卡测试</h1></div><div id="statusDot" class="status-dot" aria-label="NFC状态"></div></header>
+
+  <section id="startPanel" class="card hero">
+    <div id="scanner" class="scanner" aria-hidden="true"></div>
+    <h2 class="headline">把手机变成读卡器</h2>
+    <p id="supportText" class="sub">点击开始后，将卡牌靠近手机背面的NFC感应位置。</p>
+    <button id="startButton" class="primary">开始NFC感应</button>
+    <p class="tiny">首次使用会申请NFC权限。请保持页面在前台并关闭自动锁屏。</p>
+  </section>
+
+  <section id="gamePanel" class="hidden">
+    <div class="card">
+      <div id="stageLabel" class="stage-label">第1步 / 共4步</div>
+      <h2 id="stageTitle" class="stage-title">请打出一张任务卡</h2>
+      <p id="stageHint" class="sub">选择黄色任务卡，放到手机背面的感应区。</p>
+      <div class="progress"><div class="step"></div><div class="step"></div><div class="step"></div><div class="step"></div></div>
+      <div id="feedback" class="message">正在等待卡牌……</div>
+    </div>
+
+    <div id="currentCardBox" class="card hidden">
+      <div class="stage-label">刚刚打出的卡牌</div>
+      <div id="currentCard" class="read-card task"><div id="readId" class="read-id"></div><div id="readName" class="read-name"></div><div id="readDesc" class="read-desc"></div></div>
+    </div>
+
+    <div id="ruleBox" class="card hidden">
+      <label for="ruleInput">完成你们的AI使用规则</label>
+      <textarea id="ruleInput" placeholder="AI可以帮我们……，但我们一定要……"></textarea>
+      <div class="chips"><button class="chip">核对重要信息</button><button class="chip">保护个人隐私</button><button class="chip">请老师或家长检查</button></div>
+      <button id="finishButton" class="primary">完成任务</button>
+    </div>
+
+    <div class="card">
+      <div class="stage-label">本局记录</div>
+      <div id="history" class="history"><span class="sub">还没有打出卡牌</span></div>
+      <div class="row" style="margin-top:12px"><button id="undoButton" class="secondary">撤销上一张</button><button id="resetButton" class="secondary">重新开始</button></div>
+      <details><summary>没有NFC？使用模拟刷卡</summary><div id="simGrid" class="sim-grid"></div></details>
+    </div>
+  </section>
+
+  <section id="resultPanel" class="card result hidden">
+    <div class="eyebrow">MISSION COMPLETE</div><h2 class="headline">任务完成！</h2>
+    <div class="badges"><div class="badge">会用<br>AI</div><div class="badge">会找<br>风险</div><div class="badge">会定<br>规则</div></div>
+    <div id="resultRule" class="rule"></div>
+    <button id="againButton" class="primary">再玩一局</button>
+  </section>
+</main>
+<div id="toast" class="toast" role="status"></div>
+
+<script>
+const cards={
+ T01:{type:'task',name:'防诈骗宣传海报',desc:'帮助社区老人制作清楚、可靠的防诈骗宣传。'},
+ T02:{type:'task',name:'校园科技节宣传',desc:'为校园科技节制作吸引同学的宣传内容。'},
+ F01:{type:'function',name:'文字生成',desc:'帮助想标题、口号和介绍。'},
+ F02:{type:'function',name:'图像生成',desc:'帮助制作图片和插图。'},
+ F03:{type:'function',name:'信息总结',desc:'把复杂的信息整理得更清楚。'},
+ R01:{type:'risk',name:'虚假信息',desc:'AI可能说出看起来合理、实际上不正确的内容。'},
+ R02:{type:'risk',name:'隐私泄露',desc:'姓名、照片和电话等个人信息可能被不当使用。'},
+ D01:{type:'detective',name:'线索调查',desc:'谁会受到影响？哪一步必须由人检查？'}
+};
+const typeNames={task:'任务卡',function:'功能卡',risk:'风险卡',detective:'侦探卡'};
+let ndef=null, stage=0, played=[], lastRead={id:'',time:0};
+const $=id=>document.getElementById(id);
+const stageData=[
+ ['第1步 / 共4步','请打出一张任务卡','选择黄色任务卡，放到手机背面的感应区。','task'],
+ ['第2步 / 共4步','AI可以帮忙做什么？','讨论后打出一张蓝色功能卡。','function'],
+ ['第3步 / 共4步','风险出现了！','观察任务，再打出一张红色风险卡。','risk'],
+ ['第4步 / 共4步','请制定使用规则','说清楚AI能帮什么，以及人必须做什么。','rule']
+];
+
+function toast(text){const el=$('toast');el.textContent=text;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),1800)}
+function normalize(value){value=String(value||'').trim().toUpperCase();const match=value.match(/(?:^|[/#?=&\s])(T0[12]|F0[1-3]|R0[12]|D01)(?:$|[/#?=&\s])/);return match?match[1]:(cards[value]?value:'')}
+function expected(){return stageData[stage]?.[3]}
+function renderStage(){
+ const d=stageData[stage]; $('stageLabel').textContent=d[0];$('stageTitle').textContent=d[1];$('stageHint').textContent=d[2];
+ document.querySelectorAll('.step').forEach((x,i)=>x.classList.toggle('done',i<stage));
+ $('ruleBox').classList.toggle('hidden',expected()!=='rule');
+ $('feedback').className='message';$('feedback').textContent=expected()==='rule'?'把小组讨论出的规则写下来。':'正在等待卡牌……';
+ renderHistory();
+}
+function showCard(id){const c=cards[id];$('currentCardBox').classList.remove('hidden');$('currentCard').className='read-card '+c.type;$('readId').textContent=id+' · '+typeNames[c.type];$('readName').textContent=c.name;$('readDesc').textContent=c.desc}
+function renderHistory(){const h=$('history');if(!played.length){h.innerHTML='<span class="sub">还没有打出卡牌</span>';return}h.innerHTML=played.map(id=>`<div class="history-item"><b>${id}</b><span>${cards[id].name}</span></div>`).join('')}
+function acceptCard(raw){
+ const id=normalize(raw); if(!id){toast('没有识别到已登记的卡牌编号');return}
+ const now=Date.now();if(lastRead.id===id&&now-lastRead.time<2200){toast('已经读取过这张卡，请先拿开');return}lastRead={id,time:now};
+ const c=cards[id], need=expected();showCard(id);navigator.vibrate?.(90);
+ if(need==='rule'){toast('现在请先完成使用规则');return}
+ if(c.type!==need){$('feedback').className='message warn';$('feedback').textContent=`这是${typeNames[c.type]}。现在需要的是${typeNames[need]}，请再找一张。`;return}
+ played.push(id);stage++;
+ $('feedback').className='message ok';$('feedback').textContent=`读取成功：${c.name}`;
+ setTimeout(renderStage,900);
+}
+async function startNfc(){
+ if(!('NDEFReader' in window)){toast('当前浏览器不支持网页NFC，请使用安卓Chrome或模拟刷卡');$('supportText').textContent='当前浏览器不支持网页NFC。你仍可用下方“模拟刷卡”检查完整流程。';startGame();return}
+ try{ndef=new NDEFReader();await ndef.scan();ndef.onreading=event=>{for(const record of event.message.records){let value='';try{if(record.recordType==='url'||record.recordType==='text'||record.recordType==='absolute-url')value=new TextDecoder(record.encoding||'utf-8').decode(record.data);else value=new TextDecoder().decode(record.data)}catch(e){}const id=normalize(value)||normalize(event.serialNumber);if(id){acceptCard(id);break}}};ndef.onreadingerror=()=>toast('读取失败，请拿开卡牌后重试');$('statusDot').classList.add('on');$('scanner').classList.add('scanning');$('startButton').textContent='NFC感应已开启';$('startButton').disabled=true;startGame();toast('感应已开启')}
+ catch(e){toast(e.name==='NotAllowedError'?'没有获得NFC权限':'无法启动NFC感应');$('supportText').textContent='请确认使用HTTPS、NFC已开启，并允许浏览器使用NFC。'}
+}
+function startGame(){stage=0;played=[];$('startPanel').classList.add('hidden');$('gamePanel').classList.remove('hidden');$('resultPanel').classList.add('hidden');$('currentCardBox').classList.add('hidden');$('ruleInput').value='';renderStage()}
+function reset(){stage=0;played=[];$('currentCardBox').classList.add('hidden');$('ruleInput').value='';renderStage();toast('已经重新开始')}
+function undo(){if(!played.length){toast('还没有可以撤销的卡牌');return}played.pop();stage=Math.max(0,stage-1);$('currentCardBox').classList.add('hidden');renderStage();toast('已撤销上一张')}
+function finish(){const text=$('ruleInput').value.trim();if(text.length<6){toast('请先写下一条完整的使用规则');return}$('gamePanel').classList.add('hidden');$('resultPanel').classList.remove('hidden');$('resultRule').textContent=text;navigator.vibrate?.([80,60,120])}
+
+$('startButton').onclick=startNfc;$('resetButton').onclick=reset;$('undoButton').onclick=undo;$('finishButton').onclick=finish;$('againButton').onclick=()=>{startGame()};
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const base=$('ruleInput');const prefix=base.value.trim();base.value=(prefix?prefix+'；':'AI可以帮助我们完成任务，但我们一定要')+b.textContent+'。';base.focus()});
+$('simGrid').innerHTML=Object.keys(cards).map(id=>`<button data-id="${id}">${id}</button>`).join('');$('simGrid').onclick=e=>{const id=e.target.dataset.id;if(id)acceptCard(id)};
+if(!('NDEFReader' in window))$('supportText').textContent='安卓Chrome可直接感应；其他设备可以先使用页面内的模拟刷卡。';
+</script>
+</body>
+</html>
